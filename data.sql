@@ -14,7 +14,7 @@ CREATE TABLE companies (
 );
 
 CREATE TABLE industry (
-    id integer PRIMARY KEY,
+    id serial PRIMARY KEY,
     name text UNIQUE
 );
 
@@ -44,5 +44,5 @@ INSERT INTO industry
     VALUES (1, 'Entertaiment'), (2, 'Sales');
 
 INSERT INTO companies_industrys
-    VALUES (1, 'apple'), (2, 'ibm');
+    VALUES (1, 'apple'), (2, 'ibm'), (2, 'apple');
 

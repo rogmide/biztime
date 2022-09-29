@@ -31,7 +31,21 @@ router.get("/:code", async (req, res, next) => {
         on c.code = i.comp_code where c.code = $1`,
       [code]
     );
-    return res.json({ company: results.rows[0], invoices: invoices.rows });
+    const industrys = await db.query(
+      ` SELECT i.name 
+        from companies as c 
+        join companies_industrys ci 
+        on c.code = ci.companies_code
+        join industry as i
+        on i.id = ci.industry_id
+        where c.code=$1`,
+      [code]
+    );
+    return res.json({
+      company: results.rows[0],
+      invoices: invoices.rows,
+      industrys: industrys.rows,
+    });
   } catch (error) {
     next(error);
   }
