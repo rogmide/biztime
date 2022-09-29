@@ -3,6 +3,8 @@ const router = express.Router();
 const db = require("../db");
 const ExpressError = require("../expressError");
 
+// ############################################
+// GET /invoices Get All invoices
 router.get("/", async (req, res, next) => {
   try {
     const results = await db.query(`SELECT * FROM invoices`);
@@ -12,6 +14,8 @@ router.get("/", async (req, res, next) => {
   }
 });
 
+// ############################################
+// GET /invoices/[id] Get invoices by id
 router.get("/:id", async (req, res, next) => {
   try {
     const id = req.params.id;
@@ -25,6 +29,8 @@ router.get("/:id", async (req, res, next) => {
   }
 });
 
+// ############################################
+// POST /invoices Create new invoice
 router.post("/", async (req, res, next) => {
   try {
     const { comp_code, amt } = req.body;
@@ -38,6 +44,8 @@ router.post("/", async (req, res, next) => {
   }
 });
 
+// ############################################
+// PATCH /invoice/[id] Update invoice using the id
 router.patch("/:id", async (req, res, next) => {
   try {
     const { amt } = req.body;
@@ -55,6 +63,8 @@ router.patch("/:id", async (req, res, next) => {
   }
 });
 
+// ############################################
+// DELETE /invoices/[id] Delete a invoices by id
 router.delete("/:id", async (req, res, next) => {
   try {
     const id = req.params.id;
