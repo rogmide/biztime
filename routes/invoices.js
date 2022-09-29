@@ -46,20 +46,48 @@ router.post("/", async (req, res, next) => {
 
 // ############################################
 // PATCH /invoice/[id] Update invoice using the id
-router.patch("/:id", async (req, res, next) => {
+// router.patch("/:id", async (req, res, next) => {
+//   try {
+//     const { amt } = req.body;
+//     const id = req.params.id;
+//     const results = await db.query(
+//       "update invoices set amt=$1 where id=$2 returning *",
+//       [amt, id]
+//     );
+//     if (results.rows.length === 0) {
+//       throw new ExpressError(`Can't find invoice with id of ${id}`, 404);
+//     }
+//     return res.status(200).json({ invoice: results.rows[0] });
+//   } catch (error) {
+//     next(error);
+//   }
+// });
+
+router.patch("/:id", async function (req, res, next) {
   try {
-    const { amt } = req.body;
-    const id = req.params.id;
-    const results = await db.query(
-      "update invoices set amt=$1 where id=$2 returning *",
-      [amt, id]
-    );
-    if (results.rows.length === 0) {
+    let { amt, paid } = req.body;
+    let id = req.params.id;
+    let paidDate = null;
+    const cResult = await db.query(`select paid from invoices where id=$1`, [
+      id,
+    ]);
+    if (cResult.rows.length === 0) {
       throw new ExpressError(`Can't find invoice with id of ${id}`, 404);
     }
-    return res.status(200).json({ invoice: results.rows[0] });
-  } catch (error) {
-    next(error);
+    const cPaidDate = cResult.rows[0].paid_date;
+    if (!cPaidDate && paid) {
+      paidDate = new Date();
+    }
+    !paid ? (paidDate = null) : (paidDate = cPaidDate);
+
+    const result = await db.query(
+      `update invoices set amt=$1, paid=$2, paid_date=$3 where id=$4 returning *`,
+      [amt, paid, paidDate, id]
+    );
+
+    return res.json({ invoice: result.rows[0] });
+  } catch (err) {
+    return next(err);
   }
 });
 
